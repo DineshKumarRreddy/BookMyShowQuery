@@ -1,0 +1,145 @@
+Table Overview
+This table will store information about movies, and each row in the table will represent a single movie.
+The MovieID uniquely identifies each movie, while the Title provides the name of the movie.
+
+CREATE TABLE Movies (
+    MovieID INT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL
+);
+
+INSERT INTO Movies (MovieID, Title) VALUES (1, 'Devara'),(2, 'Salar');
+
+Each row in this table represents one theatre, identified by a unique TheatreID, and stores its name (TheatreName) and its geographical location (Location).
+CREATE TABLE Theatres (
+    TheatreID INT PRIMARY KEY,
+    TheatreName VARCHAR(255) NOT NULL,
+    Location VARCHAR(255) NOT NULL
+);
+
+INSERT INTO Theatres (TheatreID, TheatreName, Location) VALUES
+(1,'City Square Mall', 'Kurnool'),
+(2,'Jyothi Mall', 'Hyderabad');
+
+This table represents the number of screens in each theatre, using the primary key from the Theatre table as a foreign key in the Screens table.
+CREATE TABLE Screens (
+    ScreenID INT PRIMARY KEY,
+    ScreenNumber INT NOT NULL,
+    TheatreID INT,
+    FOREIGN KEY (TheatreID) REFERENCES Theatre(TheatreID)
+);
+
+-- Sample Data
+INSERT INTO Screens (ScreenID, ScreenNumber, TheatreID) VALUES
+(1, 1, 1),
+(2, 2, 1);
+
+The Shows table stores details about specific movie showings, such as the showtime, date, the movie being shown, and the screen where it will be shown.
+It references both the Movies and Screens tables through foreign keys (MovieID and ScreenID), ensuring that each show corresponds to an existing movie and a valid screen in a theatre.
+
+CREATE TABLE Shows (
+    ShowID INT PRIMARY KEY,
+    ShowTime TIME NOT NULL,
+    Date DATE NOT NULL,
+    MovieID INT,
+    ScreenID INT,
+    FOREIGN KEY (MovieID) REFERENCES Movie(MovieID),
+    FOREIGN KEY (ScreenID) REFERENCES Screen(ScreenID)
+);
+
+-- Sample Data
+INSERT INTO Shows (ShowID, ShowTime, Date, MovieID, ScreenID) VALUES
+(1, '12:00:00', '2024-10-01', 1, 1),
+(2, '6:00:00', '2024-10-01', 2, 2);
+
+Each row in this table represents a single booking, identified by a unique BookingID, and contains details about the show for which the tickets are booked (ShowID) and the number of seats booked (SeatsBooked).
+CREATE TABLE Bookings (
+    BookingID INT PRIMARY KEY,
+    ShowID INT,
+    SeatsBooked INT NOT NULL,
+    FOREIGN KEY (ShowID) REFERENCES Show(ShowID)
+);
+
+-- Sample Data
+INSERT INTO Bookings (BookingID, ShowID, SeatsBooked) VALUES
+(1, 1, 5),
+(2, 2, 3);
+
+retrieves details about movie shows scheduled for a specific date at a particular theatre. Here's a breakdown of the query
+SELECT s.ShowID, m.Title, s.ShowTime
+FROM Shows s
+JOIN Screens sc ON s.ScreenID = sc.ScreenID
+JOIN Theatres t ON sc.TheatreID = t.TheatreID
+JOIN Movies m ON s.MovieID = m.MovieID
+WHERE s.Date = '2024-10-01' AND t.TheatreID = 1;
+
+Please run the following query to fetch the details.
+
+CREATE TABLE Movies (
+    MovieID INT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL
+);
+
+INSERT INTO Movies (MovieID, Title) VALUES (1, 'Devara'),(2, 'Salar');
+
+CREATE TABLE Theatres (
+    TheatreID INT PRIMARY KEY,
+    TheatreName VARCHAR(255) NOT NULL,
+    Location VARCHAR(255) NOT NULL
+);
+
+-- Sample Data
+INSERT INTO Theatres (TheatreID, TheatreName, Location) VALUES
+(1,'City Square Mall', 'Kurnool'),
+(2,'Jyothi Mall', 'Hyderabad');
+
+
+CREATE TABLE Screens (
+    ScreenID INT PRIMARY KEY,
+    ScreenNumber INT NOT NULL,
+    TheatreID INT,
+    FOREIGN KEY (TheatreID) REFERENCES Theatre(TheatreID)
+);
+
+-- Sample Data
+INSERT INTO Screens (ScreenID, ScreenNumber, TheatreID) VALUES
+(1, 1, 1),
+(2, 2, 1);
+
+CREATE TABLE Shows (
+    ShowID INT PRIMARY KEY,
+    ShowTime TIME NOT NULL,
+    Date DATE NOT NULL,
+    MovieID INT,
+    ScreenID INT,
+    FOREIGN KEY (MovieID) REFERENCES Movie(MovieID),
+    FOREIGN KEY (ScreenID) REFERENCES Screen(ScreenID)
+);
+
+-- Sample Data
+INSERT INTO Shows (ShowID, ShowTime, Date, MovieID, ScreenID) VALUES
+(1, '12:00:00', '2024-10-01', 1, 1),
+(2, '6:00:00', '2024-10-01', 2, 2);
+
+CREATE TABLE Bookings (
+    BookingID INT PRIMARY KEY,
+    ShowID INT,
+    SeatsBooked INT NOT NULL,
+    FOREIGN KEY (ShowID) REFERENCES Show(ShowID)
+);
+
+-- Sample Data
+INSERT INTO Bookings (BookingID, ShowID, SeatsBooked) VALUES
+(1, 1, 5),
+(2, 2, 3);
+
+SELECT s.ShowID, m.Title, s.ShowTime
+FROM Shows s
+JOIN Screens sc ON s.ScreenID = sc.ScreenID
+JOIN Theatres t ON sc.TheatreID = t.TheatreID
+JOIN Movies m ON s.MovieID = m.MovieID
+WHERE s.Date = '2024-10-01' AND t.TheatreID = 1;
+
+
+Results:
+1|Devara|12:00:00
+2|Salar|6:00:00
